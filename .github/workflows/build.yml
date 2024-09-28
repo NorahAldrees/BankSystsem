@@ -18,3 +18,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
+- name: Run Tests and Generate Coverage
+  run: |
+    dart test --coverage=coverage
+    format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+- name: SonarCloud Scan
+  uses: SonarSource/sonarcloud-github-action@v1
+  with:
+    args: >
+      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
